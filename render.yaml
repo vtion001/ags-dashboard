@@ -1,0 +1,11 @@
+# Render.com Blueprint — https://render.com/docs/blueprints
+# Deploy: renderctl blueprint create
+
+services:
+  - type: web
+    name: ags-phillies-kpi
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn wsgi:server -w 1 -b 0.0.0.0:$PORT --timeout 120
+    healthCheckPath: /
+    plan: free

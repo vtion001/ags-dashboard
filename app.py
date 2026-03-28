@@ -5,6 +5,7 @@ Navy #001B4B | White | Black text.
 Run: python app.py  (starts at http://127.0.0.1:8050)
 """
 
+import os
 import pandas as pd
 import openpyxl
 import dash
@@ -14,7 +15,9 @@ import plotly.graph_objects as go
 from datetime import datetime
 
 # ─── CONFIG ──────────────────────────────────────────────────────────────────
-EXCEL_PATH = "/Users/archerterminez/Desktop/AGS/Dashboard/kpi.xlsx"
+# Resolve path relative to this file (works locally and on Render)
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+EXCEL_PATH = os.environ.get("KPI_EXCEL_PATH", os.path.join(BASE_DIR, "kpi.xlsx"))
 LOGO_URL = "https://res.cloudinary.com/dbviya1rj/image/upload/v1773384037/gpnkwelbdcwfjmw5axtx.webp"
 
 # Design tokens

@@ -1055,7 +1055,7 @@ app.layout = html.Div([
         dcc.Tabs(
             id="tabs", value="tab-kpi",
             children=[
-                dcc.Tab("KPI SCORE", value="tab-kpi",
+                dcc.Tab(label="KPI SCORE", value="tab-kpi",
                     style={"fontFamily":"Arial","fontWeight":"700","fontSize":"0.85rem",
                            "padding":"12px 28px","borderBottom":"3px solid transparent",
                            "color":DARK_GRAY,"background":BG},
@@ -1063,7 +1063,7 @@ app.layout = html.Div([
                                    "padding":"12px 28px","borderBottom":f"3px solid {NAVY}",
                                    "color":NAVY,"background":WHITE},
                 ),
-                dcc.Tab("CHARTS & TRENDS", value="tab-charts",
+                dcc.Tab(label="CHARTS & TRENDS", value="tab-charts",
                     style={"fontFamily":"Arial","fontWeight":"700","fontSize":"0.85rem",
                            "padding":"12px 28px","borderBottom":"3px solid transparent",
                            "color":DARK_GRAY,"background":BG},
@@ -1071,7 +1071,7 @@ app.layout = html.Div([
                                    "padding":"12px 28px","borderBottom":f"3px solid {NAVY}",
                                    "color":NAVY,"background":WHITE},
                 ),
-                dcc.Tab("COMPARE WEEKS", value="tab-compare",
+                dcc.Tab(label="COMPARE WEEKS", value="tab-compare",
                     style={"fontFamily":"Arial","fontWeight":"700","fontSize":"0.85rem",
                            "padding":"12px 28px","borderBottom":"3px solid transparent",
                            "color":DARK_GRAY,"background":BG},

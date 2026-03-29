@@ -1041,13 +1041,6 @@ filter_bar = html.Div([
     }),
 ], style={"background":BG})
 
-# Hidden stores
-store_filter = dcc.Store(id="store-filter", data={
-    "merged": merged.to_dict("records"),
-    "akpi": akpi.to_dict("records"),
-})
-store_compare = dcc.Store(id="store-compare", data={"week_a":"","week_b":""})
-
 app.layout = html.Div([
     header,
     filter_bar,
@@ -1084,8 +1077,6 @@ app.layout = html.Div([
         ),
     ]),
     html.Div(id="tab-content", style={"background":BG,"minHeight":"85vh","paddingBottom":"20px"}),
-    store_filter,
-    store_compare,
     footer,
 ], style={"background":BG,"fontFamily":"Arial"})
 
@@ -1108,36 +1099,29 @@ def _compute_akpi(df):
     return a.sort_values("kpi_score", ascending=False).reset_index(drop=True)
 
 
-@app.callback(
-    Output("store-filter", "data"),
-    Input("month-filter", "value"),
-    Input("week-filter", "value"),
-)
-def update_store_filter(month_val, week_val):
+def _filtered_data(month_val, week_val):
+    """Apply month/week filters to full merged data."""
     df = merged.copy()
     if month_val:
         df = df[pd.to_datetime(df["week_dt"]).dt.strftime("%Y-%m") == month_val]
     if week_val:
         df = df[df["week_label"] == week_val]
-    return {"merged": df.to_dict("records"), "akpi": _compute_akpi(df).to_dict("records")}
+    return df, _compute_akpi(df)
 
 
 @app.callback(
     Output("tab-content", "children"),
-    Input("store-filter", "data"),
-    Input("store-compare", "data"),
-    State("tabs", "value"),
-    State("month-filter", "value"),
-    State("week-filter", "value"),
+    Input("month-filter", "value"),
+    Input("week-filter", "value"),
+    Input("week-a", "value"),
+    Input("week-b", "value"),
+    Input("tabs", "value"),
 )
-def update_tab_content(store_data, compare_data, tab, month_val, week_val):
-    f_merged = pd.DataFrame.from_dict(store_data["merged"])
-    f_akpi = pd.DataFrame.from_dict(store_data["akpi"])
+def update_tab_content(month_val, week_val, week_a, week_b, tab):
+    f_merged, f_akpi = _filtered_data(month_val, week_val)
 
     if tab == "tab-compare":
-        week_a = compare_data.get("week_a") or ""
-        week_b = compare_data.get("week_b") or ""
-        compare_figs = make_compare_figures(week_a, week_b, f_merged, f_akpi)
+        compare_figs = make_compare_figures(week_a or "", week_b or "", f_merged, f_akpi)
         return html.Div([
             html.Div(style={"height":"16px"}),
             wrap([hdr(f"Week-over-Week Comparison: {week_a or '?'} vs {week_b or '?'}")]),
@@ -1155,15 +1139,6 @@ def update_tab_content(store_data, compare_data, tab, month_val, week_val):
         ])
 
     return make_figures(f_merged, f_akpi, tab)
-
-
-@app.callback(
-    Output("store-compare", "data"),
-    Input("week-a", "value"),
-    Input("week-b", "value"),
-)
-def update_store_compare(week_a, week_b):
-    return {"week_a": week_a or "", "week_b": week_b or ""}
 
 
 if __name__=="__main__":
